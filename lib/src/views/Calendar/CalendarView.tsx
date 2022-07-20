@@ -14,6 +14,7 @@ import { YearSelection, ExportedYearSelectionProps } from './YearSelection';
 import { defaultMinDate, defaultMaxDate } from '../../constants/prop-types';
 import { IsStaticVariantContext } from '../../wrappers/WrapperVariantContext';
 import { DateValidationProps, findClosestEnabledDate } from '../../_helpers/date-utils';
+import { MonthProps } from './Month';
 
 export interface CalendarViewProps<TDate>
   extends DateValidationProps<TDate>,
@@ -35,12 +36,14 @@ export interface CalendarViewProps<TDate>
    * Callback firing on month change. @DateIOType
    */
   onMonthChange?: (date: TDate) => void;
+  renderMonth?: (date: TDate, monthProps: MonthProps) => JSX.Element;
+  hijri?: any
 }
 
 export type ExportedCalendarViewProps<TDate> = Omit<
   CalendarViewProps<TDate>,
   'date' | 'view' | 'views' | 'onChange' | 'changeView' | 'slideDirection' | 'currentMonth'
->;
+  >;
 
 const muiComponentConfig = { name: 'MuiPickersCalendarView' };
 
@@ -81,6 +84,8 @@ export function CalendarView<TDate>(props: CalendarViewProps<TDate>) {
     shouldDisableDate,
     shouldDisableYear,
     view,
+    renderMonth,
+    hijri,
     ...other
   } = useDefaultProps(props, muiComponentConfig);
 
@@ -131,12 +136,12 @@ export function CalendarView<TDate>(props: CalendarViewProps<TDate>) {
   React.useEffect(() => {
     changeMonth(date);
   }, [date]); // eslint-disable-line
-
   return (
     <React.Fragment>
       <CalendarHeader
         {...other}
         view={view}
+        hijri={hijri}
         currentMonth={calendarState.currentMonth}
         changeView={changeView}
         onMonthChange={(newMonth, direction) => handleChangeMonth({ newMonth, direction })}
@@ -175,6 +180,7 @@ export function CalendarView<TDate>(props: CalendarViewProps<TDate>) {
               minDate={minDate}
               maxDate={maxDate}
               onMonthChange={onMonthChange}
+              hijri={hijri}
             />
           )}
           {view === 'date' && (
@@ -190,6 +196,7 @@ export function CalendarView<TDate>(props: CalendarViewProps<TDate>) {
               allowKeyboardControl={allowKeyboardControl}
               loading={loading}
               renderLoading={renderLoading}
+              hijri={hijri}
             />
           )}
         </div>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Month } from './Month';
+import { Month, MonthProps } from './Month';
 import { useUtils, useNow } from '../../_shared/hooks/useUtils';
 import { PickerOnChangeFn } from '../../_shared/hooks/useViews';
 
@@ -12,6 +12,8 @@ export interface MonthSelectionProps<TDate> {
   disablePast?: boolean | null | undefined;
   disableFuture?: boolean | null | undefined;
   onMonthChange?: (date: TDate) => void | Promise<void>;
+  renderMonth?: (date: TDate, monthProps: MonthProps) => JSX.Element;
+  hijri?: boolean | null | undefined;
 }
 
 export const useStyles = makeStyles(
@@ -27,14 +29,15 @@ export const useStyles = makeStyles(
 );
 
 export function MonthSelection<TDate>({
-  date,
-  disableFuture,
-  disablePast,
-  maxDate,
-  minDate,
-  onChange,
-  onMonthChange,
-}: MonthSelectionProps<TDate>) {
+                                        date,
+                                        disableFuture,
+                                        disablePast,
+                                        maxDate,
+                                        minDate,
+                                        onChange,
+                                        onMonthChange,
+                                        renderMonth,
+                                      }: MonthSelectionProps<TDate>) {
   const utils = useUtils<TDate>();
   const now = useNow<TDate>();
   const classes = useStyles();
@@ -72,18 +75,26 @@ export function MonthSelection<TDate>({
       {utils.getMonthArray(date || now).map((month) => {
         const monthNumber = utils.getMonth(month);
         const monthText = utils.format(month, 'monthShort');
-
-        return (
-          <Month
-            key={monthText}
-            value={monthNumber}
-            selected={monthNumber === currentMonth}
-            onSelect={onMonthSelect}
-            disabled={shouldDisableMonth(month)}
-          >
-            {monthText}
-          </Month>
-        );
+        const monthProps = {
+          key: monthText,
+          value: monthNumber,
+          selected: monthNumber === currentMonth,
+          onSelect: onMonthSelect,
+          disabled: shouldDisableMonth(month),
+          children: monthText,
+        };
+        return renderMonth ? renderMonth(month, monthProps) : <Month {...monthProps} />;
+        // return (
+        //   <Month
+        //     key={monthText}
+        //     value={monthNumber}
+        //     selected={monthNumber === currentMonth}
+        //     onSelect={onMonthSelect}
+        //     disabled={shouldDisableMonth(month)}
+        //   >
+        //     {monthText}
+        //   </Month>
+        // );
       })}
     </div>
   );

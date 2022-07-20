@@ -2,7 +2,8 @@ import * as React from 'react';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { onSpaceOrEnter } from '../../_helpers/utils';
+// @ts-ignore
+// import { onSpaceOrEnter } from '@material-ui/pickers/_helpers/utils';
 
 export interface MonthProps {
   children: React.ReactNode;
@@ -47,6 +48,7 @@ export const Month: React.FC<MonthProps> = (props) => {
   const handleSelection = () => {
     onSelect(value);
   };
+
   return (
     <Typography
       data-mui-test="month"
@@ -57,7 +59,7 @@ export const Month: React.FC<MonthProps> = (props) => {
       })}
       tabIndex={disabled ? -1 : 0}
       onClick={handleSelection}
-      onKeyDown={onSpaceOrEnter(handleSelection)}
+      // onKeyDown={onSpaceOrEnter(handleSelection)}
       color={selected ? 'primary' : undefined}
       variant={selected ? 'h5' : 'subtitle1'}
       {...other}
